@@ -17,7 +17,7 @@ Tensorscope is an automated tool designed to dissect and characterize the numeri
 
 The project is organized by precision format:
 
-```
+```text
 tensorscope/
 ├── Numeric_Fingerprints.py   # Main automation script
 ├── bf16/                     # Bfloat16 probing module

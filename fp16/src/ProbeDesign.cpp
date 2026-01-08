@@ -10,8 +10,8 @@
 
 namespace fs = std::filesystem;
 
-const int WIDTH_TYPE = 30;
-const int WIDTH_RESULT = 95;
+const int WIDTH_TYPE = 25;
+const int WIDTH_RESULT = 85;
 
 uint32_t hexStringToUint(const std::string& hexStr) {
     try {
@@ -49,6 +49,22 @@ std::vector<uint32_t> readFingerprint(const std::string& filepath) {
 void printRow(const std::string& type, const std::string& result) {
     std::cout << "| " << std::left << std::setw(WIDTH_TYPE) << type 
               << "| " << std::left << std::setw(WIDTH_RESULT) << result << " |" << std::endl;
+}
+
+void printRowMultiLine(const std::string& type, const std::string& result) {
+    std::stringstream ss(result);
+    std::string line;
+    bool first = true;
+    while (std::getline(ss, line)) {
+        if (first) {
+            std::cout << "| " << std::left << std::setw(WIDTH_TYPE) << type 
+                      << "| " << std::left << std::setw(WIDTH_RESULT) << line << " |" << std::endl;
+            first = false;
+        } else {
+             std::cout << "| " << std::left << std::setw(WIDTH_TYPE) << " " 
+                      << "| " << std::left << std::setw(WIDTH_RESULT) << line << " |" << std::endl;
+        }
+    }
 }
 
 void printSeparator() {
@@ -133,13 +149,52 @@ int main(int argc, char* argv[]) {
         if (uintToFloat(data[i]) > uintToFloat(data[i+1])) { monotonic = "Non-Monotonic"; break; }
     }
 
-    std::stringstream structSS;
-    structSS << "RM: " << roundingMode.substr(0, std::min((size_t)21, roundingMode.length()))
-             << ((roundingMode.length() > 21) ? "..." : "")
-             << " | Acc: " << (hasOrder ? "Ordered" : "No Order")
-             << " | DP Width: " << dpWidth
-             << " | Extra Bits: " << precBits;
-    std::string internalStructure = structSS.str();
+    std::string internalStructure;
+    if (groups == 4 && dpWidth == 4 && normType == "Butterfly Grouping (4 groups)") {
+        internalStructure = 
+            "4-Group Butterfly (Width 4)\n"
+            "pd[00-01, 04-05] pd[02-03, 06-07] pd[08-09, 12-13] pd[10-11, 14-15]\n"
+            "        |                |                |                |\n"
+            "C --+->(+)-----------+->(+)-----------+->(+)-----------+->(+)----> D";
+    } else if (groups == 2 && dpWidth == 8 && normType == "Butterfly Grouping (2 groups)") {
+        internalStructure = 
+            "2-Group Butterfly (Width 8)\n"
+            "pd[00-03, 08-11] pd[04-07, 12-15]\n"
+            "        |                |\n"
+            "C --+->(+)-----------+->(+)----> D";
+    } else if (groups == 8 && dpWidth == 2 && normType == "Sequential Grouping (8 groups)") {
+        internalStructure = 
+            "8-Group Sequential (Width 2)\n"
+            "   pd[00-01] pd[02-03] pd[04-05] pd[06-07] pd[08-09] pd[10-11] pd[12-13] pd[14-15]\n"
+            "        |         |         |         |         |         |         |         |\n"
+            "C --+->(+)----+->(+)----+->(+)----+->(+)----+->(+)----+->(+)----+->(+)----+->(+)----> D";
+    } else if (groups == 4 && dpWidth == 4 && normType == "Sequential Grouping (4 groups)") {
+        internalStructure = 
+            "4-Group Sequential (Width 4)\n"
+            "   pd[00-03] pd[04-07] pd[08-11] pd[12-15]\n"
+            "        |         |         |         |\n"
+            "C --+->(+)----+->(+)----+->(+)----+->(+)----> D";
+    } else if (groups == 2 && dpWidth == 8 && normType == "Sequential Grouping (2 groups)") {
+        internalStructure = 
+            "2-Group Sequential (Width 8)\n"
+            "   pd[00-07] pd[08-15]\n"
+            "        |         |\n"
+            "C --+->(+)----+->(+)----> D";
+    } else if (groups == 1 && dpWidth == 16 && normType == "Single Group") {
+        internalStructure = 
+            "Single-Step Accumulation (Width 16)\n"
+            "   pd[00-15]\n"
+            "        |\n"
+            "C --+->(+)----> D";
+    } else {
+        std::stringstream structSS;
+        structSS << "RM: " << roundingMode.substr(0, std::min((size_t)21, roundingMode.length()))
+                 << ((roundingMode.length() > 21) ? "..." : "")
+                 << " | Acc: " << (hasOrder ? "Ordered" : "No Order")
+                 << " | DP Width: " << dpWidth
+                 << " | Extra Bits: " << precBits;
+        internalStructure = structSS.str();
+    }
 
     std::string matchResult = "No exact match found.";
     bool matchFound = false;
@@ -196,7 +251,7 @@ int main(int argc, char* argv[]) {
     printRow("Extra Precision Bits", std::to_string(precBits));
     printRow("Normalization", normalization);
     printRow("Monotonicity", monotonic);
-    printRow("Internal Data Path", internalStructure);
+    printRowMultiLine("Internal Data Path", internalStructure);
     
     printSeparator();
     printRow("HARDWARE IDENTIFICATION", matchResult);

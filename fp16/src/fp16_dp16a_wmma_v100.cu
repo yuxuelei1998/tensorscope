@@ -102,7 +102,7 @@ void executeWMMA(const TestCase* testCases, Result* results, int numTests) {
     std::vector<__half> h_A(numTests * matrixSize, __half(0.0f));
     std::vector<__half> h_B(numTests * matrixSize, __half(0.0f));
     std::vector<float> h_C(numTests);
-    std::vector<float> h_D(numTests * matrixSize, 0.0f); // 初始化 Host 输出为 0
+    std::vector<float> h_D(numTests * matrixSize, 0.0f);
 
     for (int i = 0; i < numTests; i++) {
         int offset = i * matrixSize;

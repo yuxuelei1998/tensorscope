@@ -246,5 +246,3 @@ int main() {
     std::cout << "Finished processing " << txtFileCount << " .txt files with 16x16x16 WMMA" << std::endl;
     return 0;
 }
-
-// nvcc -arch=sm_90 -std=c++17 -o fp16_dp16a_wmma fp16_dp16a_wmma.cu

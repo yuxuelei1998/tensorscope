@@ -11,6 +11,7 @@ Tensorscope is an automated tool designed to dissect and characterize the numeri
   - Internal accumulator precision.
   - Subnormal support and zero handling.
   - Accumulation order and dot product width.
+- **Visual Data Path Analysis**: Automatically generates ASCII art diagrams of the internal accumulation data path (e.g., Volta 4-step, Ampere 2-step, Hopper 1-step) directly in the report.
 - **Hardware Support**: Compatible with a wide range of NVIDIA architectures including Volta, Turing, Ampere, Ada Lovelace, Hopper, and Blackwell.
 
 ## Project Structure
@@ -19,7 +20,7 @@ The project is organized by precision format:
 
 ```text
 tensorscope/
-├── Numeric_Fingerprints.py   # Main automation script
+├── tensorscope.py            # Main automation script
 ├── bf16/                     # Bfloat16 probing module
 │   ├── src/                  # Source code (CUDA + C++)
 │   ├── lib/                  # Compiled binaries
@@ -45,7 +46,7 @@ Ensure you have the following installed on your system:
 1. **Run the automation script**:
 
     ```bash
-    python Numeric_Fingerprints.py
+    python tensorscope.py
     ```
 
 2. **Follow the interactive prompts**:
@@ -57,6 +58,29 @@ Ensure you have the following installed on your system:
     - **Step 2**: It compiles the host-side analysis tool (`ProbeDesign.cpp`).
     - **Step 3 (Step A)**: Runs the CUDA binary to generate the raw fingerprint.
     - **Step 4 (Step B)**: Runs the C++ analysis tool to interpret the fingerprint and report the numeric behaviors.
+
+## Output Format
+
+The tool generates a compact, easy-to-read report in the console, including visualization of the inferred internal data path:
+
+```text
+===================================================================================================================
+                                           NUMERIC PROBE ANALYSIS REPORT 
+===================================================================================================================
++--------------------------+---------------------------------------------------------------------------------------+
+| PROBE TYPE               | RESULT FEEDBACK                                                                       |
++--------------------------+---------------------------------------------------------------------------------------+
+| Signed Zero              | +0                                                                                    |
+| NaN & INF                | Fixed NaN: 0x7fffffff                                                                 |
+| ...                      | ...                                                                                   |
+| Internal Data Path       | 2-Group Sequential (Width 8)                                                          |
+|                          |    pd[00-07] pd[08-15]                                                                |
+|                          |         |         |                                                                   |
+|                          | C --+->(+)----+->(+)----> D                                                           |
++--------------------------+---------------------------------------------------------------------------------------+
+| HARDWARE IDENTIFICATION  | Matches Hardware: NVIDIA Ampere Tensor Core                                           |
++--------------------------+---------------------------------------------------------------------------------------+
+```
 
 ## Methodology
 

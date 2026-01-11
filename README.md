@@ -11,7 +11,7 @@ Tensorscope is an automated tool designed to dissect and characterize the numeri
   - Internal accumulator precision.
   - Subnormal support and zero handling.
   - Accumulation order and dot product width.
-- **Visual Data Path Analysis**: Automatically generates ASCII art diagrams of the internal accumulation data path (e.g., Volta 4-step, Ampere 2-step, Hopper 1-step) directly in the report.
+- **Visual Data Path Analysis**: Automatically generates ASCII art diagrams of the internal accumulation data path (e.g., Volta 4-step, Ampere 2-step, Hopper & Blackwell 1-step) directly in the report.
 - **Hardware Support**: Compatible with a wide range of NVIDIA architectures including Volta, Turing, Ampere, Ada Lovelace, Hopper, and Blackwell.
 
 ## Project Structure

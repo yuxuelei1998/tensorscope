@@ -112,11 +112,11 @@ def run_project():
     root_dir = os.getcwd()
     base_dir = os.path.join(root_dir, precision)
     src_dir = os.path.join(base_dir, "src")
-    lib_dir = os.path.join(base_dir, "lib")
+    bin_dir = os.path.join(base_dir, "bin")
     
-    if not os.path.exists(lib_dir):
-        os.makedirs(lib_dir)
-        print_success(f"Created directory: {lib_dir}")
+    if not os.path.exists(bin_dir):
+        os.makedirs(bin_dir)
+        print_success(f"Created directory: {bin_dir}")
     is_windows = platform.system() == "Windows"
     exe_ext = ".exe" if is_windows else ""
     
@@ -129,7 +129,7 @@ def run_project():
     print_step(f"Compiling CUDA Kernel ({cuda_src_file})...")
     
     cuda_input = os.path.join(src_dir, cuda_src_file)
-    cuda_output = os.path.join(lib_dir, cuda_exe_name)
+    cuda_output = os.path.join(bin_dir, cuda_exe_name)
     
     nvcc_cmd = [
         "nvcc", 
@@ -153,7 +153,7 @@ def run_project():
     print_step(f"Compiling Probe Analysis ({cpp_src_file})...")
     
     cpp_input = os.path.join(src_dir, cpp_src_file)
-    cpp_output = os.path.join(lib_dir, cpp_exe_name)
+    cpp_output = os.path.join(bin_dir, cpp_exe_name)
     
     gpp_cmd = [
         "g++", 
@@ -175,7 +175,7 @@ def run_project():
 
     print_step("Running Analysis...")
     
-    os.chdir(lib_dir)
+    os.chdir(bin_dir)
     print(f"Changed working directory to: {os.getcwd()}")
 
     print(f"\n{Colors.BOLD}--- Step A: Generating Fingerprint (CUDA) ---{Colors.ENDC}")

@@ -23,11 +23,11 @@ tensorscope/
 ├── tensorscope.py            # Main automation script
 ├── bf16/                     # Bfloat16 probing module
 │   ├── src/                  # Source code (CUDA + C++)
-│   ├── lib/                  # Compiled binaries
+│   ├── bin/                  # Compiled binaries
 │   └── numeric_fingerprints/ # Generated fingerprint data
 └── fp16/                     # Float16 probing module
     ├── src/                  # Source code (CUDA + C++)
-    ├── lib/                  # Compiled binaries
+    ├── bin/                  # Compiled binaries
     └── numeric_fingerprints/ # Generated fingerprint data
 ```
 

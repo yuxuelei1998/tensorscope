@@ -1,0 +1,2 @@
+G:\msys64\ucrt64\bin\ar.exe qc libgcm_lib.a CMakeFiles/gcm_lib.dir/src/probes_fp16.cpp.obj CMakeFiles/gcm_lib.dir/src/probes_bf16.cpp.obj CMakeFiles/gcm_lib.dir/src/fingerprint.cpp.obj
+G:\msys64\ucrt64\bin\ranlib.exe libgcm_lib.a

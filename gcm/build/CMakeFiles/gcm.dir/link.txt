@@ -1,0 +1,3 @@
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E rm -f CMakeFiles\gcm.dir/objects.a
+G:\msys64\ucrt64\bin\ar.exe qc CMakeFiles\gcm.dir/objects.a @CMakeFiles\gcm.dir\objects1.rsp
+G:\msys64\ucrt64\bin\c++.exe -O3 -DNDEBUG -static-libgcc -static-libstdc++ -Wl,--whole-archive CMakeFiles\gcm.dir/objects.a -Wl,--no-whole-archive -o gcm.exe -Wl,--out-implib,libgcm.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\gcm.dir\linkLibs.rsp

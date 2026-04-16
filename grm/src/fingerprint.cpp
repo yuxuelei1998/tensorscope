@@ -1,4 +1,4 @@
-#include "gcm.h"
+#include "grm.h"
 #include "volta_tensor.h"
 #include "ampere_tensor.h"
 #include "hopper_tensor.h"
@@ -92,11 +92,11 @@ int compare_fingerprints(const std::vector<uint32_t>& a, const std::vector<uint3
     for (int i = 0; i < n; ++i) {
         if (a[i] != b[i]) {
             ++mismatches;
-            std::printf("MISMATCH [%2d]: GCM=0x%08X  HW=0x%08X\n", i, a[i], b[i]);
+            std::printf("MISMATCH [%2d]: GRM=0x%08X  HW=0x%08X\n", i, a[i], b[i]);
         }
     }
     if (a.size() != b.size()) {
-        std::printf("WARNING: size mismatch — GCM has %zu probes, file has %zu\n",
+        std::printf("WARNING: size mismatch — GRM has %zu probes, file has %zu\n",
                     a.size(), b.size());
         ++mismatches;
     }

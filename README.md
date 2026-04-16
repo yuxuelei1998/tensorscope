@@ -13,7 +13,7 @@ Tensorscope is an automated tool for dissecting and characterizing the numeric b
   - Accumulation order and sequential group topology
   - Subnormal handling and signed-zero propagation
   - NaN / Inf pass-through behavior
-- **Golden Reference Model (GCM)**: Software simulator that generates bit-exact expected fingerprints for each architecture, enabling differential analysis without a reference GPU.
+- **Golden Reference Model (GRM)**: Software simulator that generates bit-exact expected fingerprints for each architecture, enabling differential analysis without a reference GPU.
 - **Visual Data Path**: ASCII diagram of the inferred internal accumulation path (e.g., Volta 4-step, Ampere 2-step, Hopper/Blackwell 1-step).
 - **Hardware Support**: Volta, Turing, Ampere, Ada Lovelace, Hopper, Blackwell.
 
@@ -32,14 +32,14 @@ tensorscope/
 │   ├── bin/
 │   ├── bf16_dp16a/
 │   └── numeric_fingerprints/
-└── gcm/                        # Golden Reference Model
+└── grm/                        # Golden Reference Model
     ├── CMakeLists.txt
-    ├── include/gcm.h
+    ├── include/grm.h
     ├── src/
     │   ├── probes_fp16.cpp     # 89 FP16 probe input definitions
     │   ├── probes_bf16.cpp     # 89 BF16 probe input definitions
     │   └── fingerprint.cpp     # generate / compare / print fingerprints
-    └── main.cpp                # CLI: gcm <arch> <fmt> [reference_file]
+    └── main.cpp                # CLI: grm <arch> <fmt> [reference_file]
 ```
 
 ## Prerequisites
@@ -50,7 +50,7 @@ tensorscope/
 | Python 3.x | For the automation script |
 | CUDA Toolkit | `nvcc` must be in PATH |
 | C++ compiler | g++ (MinGW on Windows / GCC on Linux) |
-| CMake ≥ 3.14 | For building the GCM |
+| CMake ≥ 3.14 | For building the GRM |
 | NVIDIA driver | Matching your GPU |
 
 ## Quick Start
@@ -70,7 +70,7 @@ Follow the prompts to select precision (`fp16` or `bf16`). The script will:
 
 ### 2. Build and run the Golden Reference Model
 
-The GCM depends on [tensor_sim](https://github.com/yuxuelei1998/tensor_sim), a software simulator for NVIDIA Tensor Core operations. Clone it as a sibling directory of this repository before building:
+The GRM depends on [tensor_sim](https://github.com/yuxuelei1998/tensor_sim), a software simulator for NVIDIA Tensor Core operations. Clone it as a sibling directory of this repository before building:
 
 ```bash
 # Directory layout expected:
@@ -81,29 +81,29 @@ The GCM depends on [tensor_sim](https://github.com/yuxuelei1998/tensor_sim), a s
 git clone https://github.com/yuxuelei1998/tensor_sim ../tensor_sim
 ```
 
-Then build the GCM:
+Then build the GRM:
 
 ```bash
-cd gcm
+cd grm
 mkdir build && cd build
 cmake .. -G "MinGW Makefiles"   # or "Unix Makefiles" on Linux
 make -j4
 ```
 
-Generate a GCM fingerprint:
+Generate a GRM fingerprint:
 
 ```bash
-./gcm <arch> <fmt>
+./grm <arch> <fmt>
 # e.g.
-./gcm hopper fp16
-./gcm ampere bf16
+./grm hopper fp16
+./grm ampere bf16
 ```
 
-Compare GCM against a hardware-captured fingerprint:
+Compare GRM against a hardware-captured fingerprint:
 
 ```bash
-./gcm ampere fp16 ../../fp16/numeric_fingerprints/"NVIDIA Ampere Tensor Core.txt"
-./gcm hopper bf16 ../../bf16/numeric_fingerprints/"NVIDIA Hopper & Blackwell Tensor Core.txt"
+./grm ampere fp16 ../../fp16/numeric_fingerprints/"NVIDIA Ampere Tensor Core.txt"
+./grm hopper bf16 ../../bf16/numeric_fingerprints/"NVIDIA Hopper & Blackwell Tensor Core.txt"
 ```
 
 A passing run prints:
@@ -112,7 +112,7 @@ A passing run prints:
 PASS — all 89 probes match.
 ```
 
-## GCM Architecture / Format Support
+## GRM Architecture / Format Support
 
 | Architecture | FP16 | BF16 | Dot-product width |
 |---|---|---|---|
@@ -165,7 +165,7 @@ Tensorscope operates in four phases:
 
 1. **Target Unit Activation** — Isolate the specific Tensor Core operation via WMMA instructions (`wmma::mma_sync`).
 2. **Discriminant Numeric Probe Design** — Construct input vectors sensitive to a single microarchitectural parameter while keeping all others neutral.
-3. **Internal Validation** — Cross-check hardware outputs against the GCM (software simulator) to confirm probe integrity.
+3. **Internal Validation** — Cross-check hardware outputs against the GRM (software simulator) to confirm probe integrity.
 4. **Differential Analysis** — Compare the 89-value fingerprint against the reference database to identify the exact hardware behavior.
 
 ## Troubleshooting
@@ -173,4 +173,4 @@ Tensorscope operates in four phases:
 - **`nvcc not found`**: Install the CUDA Toolkit and add its `bin/` directory to PATH.
 - **`g++ not found`**: Install MinGW (Windows) or `build-essential` (Linux).
 - **Architecture mismatch**: If auto-detection picks the wrong SM version, override it when prompted.
-- **GCM build fails**: Ensure `tensor_sim` is cloned as a sibling of this repository (see above), and that CMake ≥ 3.14 and g++ are in PATH.
+- **GRM build fails**: Ensure `tensor_sim` is cloned as a sibling of this repository (see above), and that CMake ≥ 3.14 and g++ are in PATH.

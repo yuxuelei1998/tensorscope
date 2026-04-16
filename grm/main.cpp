@@ -1,4 +1,4 @@
-#include "gcm.h"
+#include "grm.h"
 #include <cstdio>
 #include <cstring>
 static void usage(const char* prog)
@@ -41,17 +41,17 @@ int main(int argc, char* argv[])
         usage(argv[0]);
         return 1;
     }
-    auto gcm_fp = generate_fingerprint(arch, fmt);
-    if (gcm_fp.empty()) {
+    auto grm_fp = generate_fingerprint(arch, fmt);
+    if (grm_fp.empty()) {
         std::fprintf(stderr, "Error: %s + BF16 is not supported.\n", arch_name(arch));
         return 1;
     }
     if (argc < 4) {
-        std::printf("GCM fingerprint — %s / %s (%d probes)\n",
+        std::printf("GRM fingerprint — %s / %s (%d probes)\n",
                     arch_name(arch),
                     (fmt == InputFormat::FP16) ? "FP16" : "BF16",
                     NUM_PROBES);
-        print_fingerprint(gcm_fp);
+        print_fingerprint(grm_fp);
         return 0;
     }
     const char* ref_path = argv[3];
@@ -60,11 +60,11 @@ int main(int argc, char* argv[])
         std::fprintf(stderr, "Error: failed to load reference from '%s'\n", ref_path);
         return 1;
     }
-    std::printf("Comparing GCM (%s/%s) against '%s'\n",
+    std::printf("Comparing GRM (%s/%s) against '%s'\n",
                 arch_name(arch),
                 (fmt == InputFormat::FP16) ? "FP16" : "BF16",
                 ref_path);
-    int mismatches = compare_fingerprints(gcm_fp, ref_fp);
+    int mismatches = compare_fingerprints(grm_fp, ref_fp);
     if (mismatches == 0) {
         std::printf("PASS — all %d probes match.\n", NUM_PROBES);
     } else {
